@@ -1,0 +1,13 @@
+# build output
+/vault-search
+/dist/
+
+# go test artifacts
+*.test
+*.out
+
+# throwaway design docs — kept local, never committed
+/design/
+
+# personal Claude Code overrides (per-developer)
+/.claude/settings.local.json
