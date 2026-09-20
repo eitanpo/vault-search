@@ -6,7 +6,7 @@ Go module. The MCP client wraps the official [`modelcontextprotocol/go-sdk`](htt
 
 - Go (see `go.mod` for the version)
 - [GoReleaser](https://goreleaser.com) for releases (`brew install goreleaser`)
-- A running `obsidian-hybrid-search serve` daemon for the live smoke test
+- A running `obsidian-hybrid-search serve` daemon for the live smoke test. Check liveness with `lsof -iTCP:3939`, `vault-search status` (it actually connects), or — if launchd-managed — `launchctl print`. Note: `serve status`/`serve stop` track only the tool's own self-daemonized state file, so they report "not running" for a `--foreground` daemon (e.g. one started by launchd) even while it is live; the port is the source of truth.
 
 ## Build, run, install
 
