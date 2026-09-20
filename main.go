@@ -21,7 +21,7 @@ import (
 // version holds the last published release; it is canonical here. `make build`
 // appends a build-timestamp (+.dirty) segment for local builds, and GoReleaser
 // overrides it from the git tag on release, both via -ldflags "-X main.version".
-var version = "0.1.0"
+var version = "0.1.1"
 
 const defaultURL = "http://127.0.0.1:3939/mcp"
 
