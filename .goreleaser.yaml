@@ -32,8 +32,8 @@ archives:
 checksum:
   name_template: checksums.txt
 
-# macOS-only cask, pushed to the personal tap. Binaries are unsigned, so the
-# post-install hook strips the quarantine attribute that would otherwise block
+# macOS-only cask, pushed to the personal tap. Binaries are unsigned, so an
+# install-time step strips the quarantine attribute that would otherwise block
 # the first run. Linux users install via `go install` instead (no cask).
 homebrew_casks:
   - name: vault-search
@@ -44,9 +44,20 @@ homebrew_casks:
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: "https://github.com/eitanpo/vault-search"
     description: "Thin CLI over an obsidian-hybrid-search serve daemon for concurrent vault search"
-    hooks:
-      post:
-        install: |
-          if OS.mac?
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/vault-search"]
-          end
+    # Strip the macOS quarantine attribute from the unsigned binary at install
+    # time. Written as a `postflight_steps` stanza in custom_block rather than
+    # through `hooks.post.install`: GoReleaser 2.18.2 hardcodes the wrapper
+    # `postflight do` for that hook, Homebrew deprecated `postflight` in favour
+    # of `postflight_steps`, and no released GoReleaser can emit the new form.
+    # `chdir` already resolves to the staged path, so the relative argument
+    # avoids a `{{staged_path}}` token that GoReleaser's own template pass would
+    # try to evaluate.
+    # The OS.mac? guard is carried over from the hook this replaces: the cask
+    # also carries linux URLs, and /usr/bin/xattr exists only on macOS, so an
+    # unguarded step fails the install on a Linux brew instead of doing nothing.
+    custom_block: |
+      if OS.mac?
+        postflight_steps do
+          run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "vault-search"], chdir: "."
+        end
+      end

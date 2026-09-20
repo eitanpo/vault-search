@@ -35,4 +35,4 @@ Releases are cut locally with GoReleaser, driven by [`.goreleaser.yaml`](.gorele
 3. Dry-run: `make release-dry` (builds all targets, publishes nothing).
 4. Publish: `make release` (runs `goreleaser release --clean` sourcing both tokens from `gh auth token`, then `make install` so this machine runs what shipped).
 
-macOS binaries are unsigned, so the cask's post-install hook strips the quarantine attribute. Linux has no cask — `go install` instead.
+macOS binaries are unsigned, so the cask strips the quarantine attribute with a postflight step at install time. Linux has no cask — `go install` instead.
